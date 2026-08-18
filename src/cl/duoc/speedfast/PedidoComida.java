@@ -1,14 +1,13 @@
 package cl.duoc.speedfast;
 
 /**
- * Representa un pedido de comida realizado a través de SpeedFast.
- * <p>
- * Los pedidos de comida requieren que el repartidor disponga
- * de una mochila térmica para mantener la temperatura del producto.
- * </p>
+ * Representa un pedido de comida dentro del sistema SpeedFast.
+ *
+ * El tiempo estimado de entrega corresponde a 15 minutos
+ * base más 2 minutos por cada kilómetro de distancia.
  *
  * @author Pablo Marquez
- * @version 1.0
+ * @version 2.0
  */
 public class PedidoComida extends Pedido {
 
@@ -16,40 +15,30 @@ public class PedidoComida extends Pedido {
      * Constructor de un pedido de comida.
      *
      * @param idPedido identificador único del pedido
-     * @param direccionEntrega dirección donde se entregará el pedido
+     * @param direccionEntrega dirección de entrega
+     * @param distanciaKm distancia de entrega en kilómetros
      */
-    public PedidoComida(int idPedido, String direccionEntrega) {
-        super(idPedido, direccionEntrega, "Comida");
+    public PedidoComida(
+            int idPedido,
+            String direccionEntrega,
+            double distanciaKm) {
+
+        super(idPedido, direccionEntrega, distanciaKm);
     }
 
     /**
-     * Asigna un repartidor para un pedido de comida.
-     * <p>
-     * Sobrescribe el método definido en {@link Pedido} para
-     * considerar el requisito de mochila térmica.
-     * </p>
-     */
-    @Override
-    public void asignarRepartidor() {
-        System.out.println(
-                "Buscando repartidor disponible con mochila térmica..."
-        );
-    }
-
-    /**
-     * Asigna un repartidor específico al pedido de comida.
+     * Calcula el tiempo estimado de entrega para un pedido de comida.
      *
-     * @param nombreRepartidor nombre del repartidor asignado
+     * Fórmula:
+     * 15 minutos base + 2 minutos por kilómetro.
+     *
+     * @return tiempo estimado en minutos
      */
     @Override
-    public void asignarRepartidor(String nombreRepartidor) {
-        System.out.println(
-                "Repartidor " + nombreRepartidor
-                        + " asignado al pedido de comida."
-        );
+    public int calcularTiempoEntrega() {
 
-        System.out.println(
-                "Validación: el repartidor debe contar con mochila térmica."
+        return (int) Math.round(
+                15 + (2 * distanciaKm)
         );
     }
 }

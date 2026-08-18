@@ -1,69 +1,55 @@
 package cl.duoc.speedfast;
 
 /**
- * Clase base que representa un pedido dentro del sistema SpeedFast.
- * <p>
- * Contiene la información común de todos los tipos de pedidos y define
- * los métodos utilizados para realizar la asignación de repartidores.
- * </p>
+ * Clase abstracta que representa un pedido genérico
+ * dentro del sistema SpeedFast.
+ *
+ * Contiene los atributos y comportamientos comunes
+ * para todos los tipos de pedidos.
  *
  * @author Pablo Marquez
- * @version 1.0
+ * @version 2.0
  */
-public class Pedido {
+public abstract class Pedido {
 
     /** Identificador único del pedido. */
     protected int idPedido;
 
-    /** Dirección donde debe ser entregado el pedido. */
+    /** Dirección donde se realizará la entrega. */
     protected String direccionEntrega;
 
-    /** Tipo de pedido registrado en el sistema. */
-    protected String tipoPedido;
+    /** Distancia del pedido expresada en kilómetros. */
+    protected double distanciaKm;
 
     /**
      * Constructor de la clase Pedido.
      *
      * @param idPedido identificador único del pedido
      * @param direccionEntrega dirección donde se realizará la entrega
-     * @param tipoPedido tipo de pedido
+     * @param distanciaKm distancia de entrega expresada en kilómetros
      */
-    public Pedido(int idPedido, String direccionEntrega, String tipoPedido) {
+    public Pedido(int idPedido, String direccionEntrega, double distanciaKm) {
         this.idPedido = idPedido;
         this.direccionEntrega = direccionEntrega;
-        this.tipoPedido = tipoPedido;
+        this.distanciaKm = distanciaKm;
     }
 
     /**
-     * Realiza una asignación genérica de repartidor.
-     * <p>
-     * Este método puede ser sobrescrito por las clases derivadas
-     * para implementar un comportamiento específico.
-     * </p>
+     * Muestra en consola los datos básicos del pedido.
      */
-    public void asignarRepartidor() {
-        System.out.println("Asignando un repartidor al pedido...");
-    }
-
-    /**
-     * Asigna un repartidor utilizando su nombre.
-     * <p>
-     * Este método corresponde a una sobrecarga de
-     * {@link #asignarRepartidor()}.
-     * </p>
-     *
-     * @param nombreRepartidor nombre del repartidor que será asignado
-     */
-    public void asignarRepartidor(String nombreRepartidor) {
-        System.out.println("Repartidor asignado: " + nombreRepartidor);
-    }
-
-    /**
-     * Muestra en consola los datos principales del pedido.
-     */
-    public void mostrarDatos() {
+    public void mostrarResumen() {
         System.out.println("ID Pedido: " + idPedido);
-        System.out.println("Dirección: " + direccionEntrega);
-        System.out.println("Tipo de pedido: " + tipoPedido);
+        System.out.println("Dirección de entrega: " + direccionEntrega);
+        System.out.println("Distancia: " + distanciaKm + " km");
     }
+
+    /**
+     * Calcula el tiempo estimado de entrega del pedido.
+     *
+     * Cada clase derivada debe implementar este método
+     * según sus propias reglas de negocio.
+     *
+     * @return tiempo estimado de entrega expresado en minutos
+     */
+    public abstract int calcularTiempoEntrega();
 }

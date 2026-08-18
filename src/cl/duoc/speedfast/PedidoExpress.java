@@ -1,15 +1,14 @@
 package cl.duoc.speedfast;
 
 /**
- * Representa un pedido de compra express de SpeedFast.
- * <p>
- * Este tipo de servicio corresponde principalmente a compras
- * realizadas en supermercados o farmacias y requiere asignar
- * al repartidor disponible más cercano.
- * </p>
+ * Representa un pedido de compra express.
+ *
+ * El tiempo base es de 10 minutos.
+ * Si la distancia supera los 5 kilómetros,
+ * se agregan 5 minutos adicionales.
  *
  * @author Pablo Marquez
- * @version 1.0
+ * @version 2.0
  */
 public class PedidoExpress extends Pedido {
 
@@ -17,43 +16,35 @@ public class PedidoExpress extends Pedido {
      * Constructor de un pedido express.
      *
      * @param idPedido identificador único del pedido
-     * @param direccionEntrega dirección donde se realizará la entrega
+     * @param direccionEntrega dirección de entrega
+     * @param distanciaKm distancia de entrega en kilómetros
      */
-    public PedidoExpress(int idPedido, String direccionEntrega) {
-        super(idPedido, direccionEntrega, "Compra Express");
+    public PedidoExpress(
+            int idPedido,
+            String direccionEntrega,
+            double distanciaKm) {
+
+        super(idPedido, direccionEntrega, distanciaKm);
     }
 
     /**
-     * Busca un repartidor para el pedido express.
-     * <p>
-     * Sobrescribe el método de la clase base para buscar
-     * al repartidor más cercano con disponibilidad inmediata.
-     * </p>
-     */
-    @Override
-    public void asignarRepartidor() {
-        System.out.println(
-                "Buscando el repartidor más cercano "
-                        + "con disponibilidad inmediata..."
-        );
-    }
-
-    /**
-     * Asigna un repartidor específico al pedido express.
+     * Calcula el tiempo estimado de entrega del pedido express.
      *
-     * @param nombreRepartidor nombre del repartidor asignado
+     * El tiempo base es de 10 minutos.
+     * Si la distancia es mayor a 5 kilómetros,
+     * se agregan 5 minutos adicionales.
+     *
+     * @return tiempo estimado en minutos
      */
     @Override
-    public void asignarRepartidor(String nombreRepartidor) {
+    public int calcularTiempoEntrega() {
 
-        System.out.println(
-                "Repartidor " + nombreRepartidor
-                        + " asignado a la compra express."
-        );
+        int tiempo = 10;
 
-        System.out.println(
-                "Validación: repartidor cercano "
-                        + "y disponible inmediatamente."
-        );
+        if (distanciaKm > 5) {
+            tiempo += 5;
+        }
+
+        return tiempo;
     }
 }
