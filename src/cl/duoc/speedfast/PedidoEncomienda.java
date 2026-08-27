@@ -1,22 +1,19 @@
 package cl.duoc.speedfast;
 
 /**
- * Representa un pedido de encomienda dentro del sistema SpeedFast.
- *
- * El tiempo estimado corresponde a 20 minutos base
- * más 1.5 minutos por cada kilómetro recorrido.
+ * Representa un pedido de encomienda.
  *
  * @author Pablo Marquez
- * @version 2.0
+ * @version 3.0
  */
 public class PedidoEncomienda extends Pedido {
 
     /**
-     * Constructor de un pedido de encomienda.
+     * Constructor de PedidoEncomienda.
      *
-     * @param idPedido identificador único del pedido
+     * @param idPedido identificador del pedido
      * @param direccionEntrega dirección de entrega
-     * @param distanciaKm distancia de entrega en kilómetros
+     * @param distanciaKm distancia en kilómetros
      */
     public PedidoEncomienda(
             int idPedido,
@@ -27,12 +24,32 @@ public class PedidoEncomienda extends Pedido {
     }
 
     /**
-     * Calcula el tiempo estimado de entrega para una encomienda.
+     * Asigna automáticamente un repartidor para
+     * una encomienda.
+     */
+    @Override
+    public void asignarRepartidor() {
+
+        repartidorAsignado = "Daniela Tapia";
+
+        System.out.println(
+                "Asignación automática para Pedido Encomienda."
+        );
+
+        System.out.println(
+                "Repartidor: " + repartidorAsignado
+        );
+
+        System.out.println(
+                "Validación: peso y embalaje revisados."
+        );
+    }
+
+    /**
+     * Calcula el tiempo estimado de entrega.
      *
      * Fórmula:
      * 20 minutos base + 1.5 minutos por kilómetro.
-     *
-     * El resultado se redondea a un valor entero.
      *
      * @return tiempo estimado en minutos
      */

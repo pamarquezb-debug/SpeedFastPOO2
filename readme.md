@@ -4,156 +4,178 @@
 
 Proyecto desarrollado en **Java** para la asignatura **Programación Orientada a Objetos II** de **Duoc UC**.
 
-El proyecto utiliza el caso de la empresa ficticia **SpeedFast**, dedicada al reparto a domicilio, para aplicar progresivamente distintos conceptos de Programación Orientada a Objetos.
+### Semana 3 — Actividad Sumativa
 
-Durante la **Semana 1** se trabajó principalmente con herencia, polimorfismo, sobrecarga y sobreescritura de métodos.
-
-En la **Semana 2** el proyecto evoluciona incorporando una **clase abstracta**, métodos abstractos y reutilización de comportamiento mediante herencia.
+**"Diseñando un sistema orientado a objetos con clases abstractas, polimorfismo e interfaces"**
 
 ---
 
 # Descripción del proyecto
 
-SpeedFast es una empresa ficticia dedicada al reparto a domicilio que ofrece tres tipos de servicios:
+**SpeedFast** es una empresa ficticia dedicada al reparto a domicilio que ofrece tres tipos de servicios:
 
 * **Comida:** pedidos provenientes de restaurantes.
 * **Encomiendas:** envío de documentos o paquetes.
 * **Compra Express:** compras realizadas principalmente en supermercados o farmacias.
 
-Cada tipo de pedido posee características particulares que afectan el tiempo estimado necesario para realizar la entrega.
+Durante las semanas anteriores se desarrollaron diferentes componentes del sistema aplicando conceptos de Programación Orientada a Objetos.
 
-El sistema utiliza una jerarquía de clases que permite representar los diferentes tipos de pedidos y reutilizar los atributos y comportamientos que poseen en común.
+En esta tercera etapa se desarrolla una versión integral del sistema, incorporando conjuntamente:
 
----
-
-# Semana 1 — Sobrecarga y sobreescritura
-
-Durante la primera semana se desarrolló la estructura inicial del sistema SpeedFast.
-
-Los principales conceptos aplicados fueron:
-
-* Clases y objetos.
+* Abstracción.
 * Herencia.
 * Polimorfismo.
 * Sobrecarga de métodos.
 * Sobreescritura de métodos.
-* Uso de `@Override`.
+* Interfaces.
+* Colecciones mediante `ArrayList`.
+* Separación de responsabilidades.
 
-Se creó una clase base `Pedido` y tres clases derivadas:
+---
+
+# Objetivo
+
+El objetivo de esta actividad es desarrollar una solución orientada a objetos que permita administrar diferentes tipos de pedidos de SpeedFast.
+
+El sistema permite:
+
+* Crear diferentes tipos de pedidos.
+* Asignar repartidores automáticamente.
+* Asignar repartidores manualmente.
+* Calcular tiempos estimados de entrega.
+* Despachar pedidos.
+* Cancelar pedidos.
+* Registrar entregas.
+* Consultar el historial de pedidos procesados.
+
+---
+
+# Estructura general
+
+El sistema utiliza una clase abstracta denominada `Pedido`.
+
+De ella heredan tres clases especializadas:
 
 ```text
-Pedido
-│
-├── PedidoComida
-├── PedidoEncomienda
-└── PedidoExpress
+                     Pedido
+                  <<abstracta>>
+                       │
+          ┌────────────┼────────────┐
+          │            │            │
+          ▼            ▼            ▼
+   PedidoComida  PedidoEncomienda  PedidoExpress
 ```
 
-Cada clase derivada implementó su propio comportamiento para la asignación de repartidores.
+Además, se utilizan las interfaces:
 
-La sobrecarga se realizó mediante dos versiones del método:
-
-```java
-asignarRepartidor()
+```text
+Despachable
+Cancelable
+Rastreable
 ```
 
-y:
+y la clase:
 
-```java
-asignarRepartidor(String nombreRepartidor)
+```text
+ControladorDeEnvios
 ```
 
-De esta manera se utilizaron métodos con el mismo nombre, pero con diferentes firmas.
-
-Las clases derivadas también sobrescribieron los métodos heredados para adaptar su comportamiento a cada tipo de pedido.
+para administrar el historial de los pedidos.
 
 ---
 
-# Semana 2 — Definiendo una clase abstracta y su jerarquía
+# Clase abstracta Pedido
 
-Durante la segunda semana se modifica la estructura del sistema para desarrollar una solución más robusta y reutilizable.
+`Pedido` representa las características comunes de todos los pedidos administrados por SpeedFast.
 
-La clase `Pedido` pasa a ser una **clase abstracta**:
+La clase está declarada como:
 
 ```java
-public abstract class Pedido
+public abstract class Pedido implements Despachable, Cancelable
 ```
 
-Esta clase representa las características comunes de todos los pedidos de SpeedFast.
-
----
-
-## Clase abstracta Pedido
-
-La clase `Pedido` contiene los siguientes atributos comunes:
+Sus principales atributos son:
 
 ```java
 protected int idPedido;
 protected String direccionEntrega;
 protected double distanciaKm;
+protected String repartidorAsignado;
+protected String estado;
 ```
 
-Estos atributos representan:
+Estos atributos permiten almacenar:
 
-* `idPedido`: identificador único del pedido.
-* `direccionEntrega`: dirección donde debe realizarse la entrega.
-* `distanciaKm`: distancia de la entrega expresada en kilómetros.
+* Identificador del pedido.
+* Dirección de entrega.
+* Distancia de entrega.
+* Repartidor asignado.
+* Estado actual del pedido.
 
-La clase también contiene un método implementado:
+---
+
+# Abstracción
+
+La clase `Pedido` es abstracta, por lo que no puede ser instanciada directamente.
+
+No es posible realizar:
+
+```java
+Pedido pedido = new Pedido(...);
+```
+
+En cambio, deben utilizarse sus clases derivadas:
+
+```java
+PedidoComida comida =
+        new PedidoComida(
+                101,
+                "Av. Providencia 1234",
+                4.0
+        );
+```
+
+La clase abstracta permite concentrar los atributos y comportamientos comunes evitando duplicar código en las clases especializadas.
+
+---
+
+# Método mostrarResumen()
+
+La clase `Pedido` implementa el método:
 
 ```java
 public void mostrarResumen()
 ```
 
-Este método permite mostrar los datos básicos de cualquier pedido.
+Este método permite visualizar los datos principales del pedido:
 
-Además, se declara el método abstracto:
+```text
+Pedido #101
+Dirección: Av. Providencia 1234
+Distancia: 4.0 km
+Repartidor asignado: Luis Díaz
+Estado: Pendiente
+```
+
+Debido a la herencia, todas las clases derivadas pueden reutilizar este método.
+
+---
+
+# Cálculo del tiempo de entrega
+
+La clase abstracta `Pedido` declara:
 
 ```java
 public abstract int calcularTiempoEntrega();
 ```
 
-Este método no posee implementación en la clase `Pedido`.
-
-Cada clase derivada debe implementar su propia versión de `calcularTiempoEntrega()` de acuerdo con las reglas correspondientes al tipo de pedido.
+Cada clase derivada debe implementar este método utilizando su propia regla de negocio.
 
 ---
 
-# Jerarquía de clases
+## PedidoComida
 
-La estructura de clases utilizada durante la Semana 2 es:
-
-```text
-                 Pedido
-             <<abstracta>>
-                    │
-        ┌───────────┼───────────┐
-        │           │           │
-        ▼           ▼           ▼
- PedidoComida  PedidoEncomienda  PedidoExpress
-```
-
-Las clases:
-
-* `PedidoComida`
-* `PedidoEncomienda`
-* `PedidoExpress`
-
-heredan los atributos y métodos comunes definidos en `Pedido`.
-
-Cada una implementa de forma diferente:
-
-```java
-calcularTiempoEntrega()
-```
-
----
-
-# PedidoComida
-
-La clase `PedidoComida` representa pedidos provenientes de restaurantes.
-
-El tiempo estimado de entrega se calcula considerando:
+Los pedidos de comida utilizan la siguiente regla:
 
 **15 minutos base + 2 minutos por cada kilómetro.**
 
@@ -163,7 +185,7 @@ Por ejemplo, para una distancia de 4 kilómetros:
 15 + (2 × 4) = 23 minutos
 ```
 
-La implementación es:
+Implementación:
 
 ```java
 @Override
@@ -176,23 +198,25 @@ public int calcularTiempoEntrega() {
 
 ---
 
-# PedidoEncomienda
+## PedidoEncomienda
 
-La clase `PedidoEncomienda` representa el envío de documentos o paquetes.
+Las encomiendas utilizan:
 
-El tiempo estimado se calcula considerando:
+**20 minutos base + 1.5 minutos por kilómetro.**
 
-**20 minutos base + 1.5 minutos por cada kilómetro.**
-
-El resultado se ajusta a un número entero.
-
-Por ejemplo, para una distancia de 6 kilómetros:
+Por ejemplo, para una distancia de 7 kilómetros:
 
 ```text
-20 + (1.5 × 6) = 29 minutos
+20 + (1.5 × 7) = 30.5
 ```
 
-La implementación es:
+El resultado se ajusta a un número entero utilizando `Math.round()`:
+
+```text
+31 minutos
+```
+
+Implementación:
 
 ```java
 @Override
@@ -205,25 +229,23 @@ public int calcularTiempoEntrega() {
 
 ---
 
-# PedidoExpress
+## PedidoExpress
 
-La clase `PedidoExpress` representa compras realizadas principalmente en supermercados o farmacias.
-
-El tiempo base de entrega es de:
+Los pedidos Express utilizan un tiempo base de:
 
 ```text
 10 minutos
 ```
 
-Si la distancia de entrega es superior a **5 kilómetros**, se agregan **5 minutos adicionales**.
+Si la distancia es superior a **5 kilómetros**, se agregan **5 minutos adicionales**.
 
-Por ejemplo, para una distancia de 7 kilómetros:
+Ejemplo para una distancia de 8 kilómetros:
 
 ```text
 10 + 5 = 15 minutos
 ```
 
-La implementación es:
+Implementación:
 
 ```java
 @Override
@@ -241,153 +263,285 @@ public int calcularTiempoEntrega() {
 
 ---
 
-# Uso de abstracción
+# Polimorfismo
 
-La clase `Pedido` está declarada como abstracta, por lo que no puede ser instanciada directamente.
+El sistema aplica polimorfismo mediante métodos que presentan comportamientos diferentes dependiendo del tipo de pedido.
 
-Por ejemplo, no es posible realizar:
-
-```java
-Pedido pedido = new Pedido(...);
-```
-
-En cambio, se deben crear objetos pertenecientes a las clases concretas:
+Uno de ellos es:
 
 ```java
-PedidoComida comida =
-        new PedidoComida(
-                1,
-                "Av. Providencia 1500",
-                4.0
-        );
-
-PedidoEncomienda encomienda =
-        new PedidoEncomienda(
-                2,
-                "Av. Apoquindo 3200",
-                6.0
-        );
-
-PedidoExpress express =
-        new PedidoExpress(
-                3,
-                "Gran Avenida 4500",
-                7.0
-        );
+asignarRepartidor()
 ```
 
-De esta forma, `Pedido` establece una estructura común y las clases derivadas implementan los comportamientos específicos.
+Las clases:
+
+```text
+PedidoComida
+PedidoEncomienda
+PedidoExpress
+```
+
+sobrescriben este método utilizando `@Override`.
 
 ---
 
-# Método mostrarResumen()
+# Sobreescritura
 
-El método `mostrarResumen()` se encuentra implementado directamente en la clase abstracta `Pedido`.
+Cada clase derivada implementa su propia lógica para realizar una asignación automática.
 
-```java
-public void mostrarResumen() {
-    System.out.println("ID Pedido: " + idPedido);
-    System.out.println("Dirección de entrega: " + direccionEntrega);
-    System.out.println("Distancia: " + distanciaKm + " km");
-}
-```
-
-Debido a la herencia, todas las clases derivadas pueden utilizar este método sin necesidad de volver a implementarlo.
-
----
-
-# Método calcularTiempoEntrega()
-
-El método:
-
-```java
-public abstract int calcularTiempoEntrega();
-```
-
-es declarado en la clase abstracta `Pedido`.
-
-Cada clase derivada debe proporcionar obligatoriamente su propia implementación mediante `@Override`.
-
-Por ejemplo:
+Por ejemplo, un pedido de comida requiere un repartidor que disponga de mochila térmica:
 
 ```java
 @Override
-public int calcularTiempoEntrega() {
-    // Cálculo específico según el tipo de pedido
+public void asignarRepartidor() {
+
+    repartidorAsignado = "Luis Díaz";
+
+    System.out.println(
+            "Asignación automática para Pedido Comida."
+    );
+
+    System.out.println(
+            "Repartidor: " + repartidorAsignado
+    );
+
+    System.out.println(
+            "Validación: repartidor con mochila térmica."
+    );
 }
 ```
 
-Esto permite utilizar una misma operación para todos los pedidos, pero con comportamientos diferentes según la clase que la implemente.
+En una encomienda se considera la validación del peso y embalaje.
+
+En una compra Express se considera al repartidor más cercano con disponibilidad inmediata.
+
+---
+
+# Sobrecarga
+
+También se implementa una segunda versión del método:
+
+```java
+public void asignarRepartidor(String nombre)
+```
+
+Esta versión permite asignar manualmente un repartidor.
+
+Ejemplo:
+
+```java
+encomienda.asignarRepartidor(
+        "Daniela Tapia"
+);
+```
+
+Por lo tanto, existen dos métodos con el mismo nombre:
+
+```java
+asignarRepartidor()
+```
+
+y:
+
+```java
+asignarRepartidor(String nombre)
+```
+
+Esto corresponde a **sobrecarga de métodos**, ya que poseen el mismo nombre pero diferente firma.
+
+---
+
+# Interfaces
+
+Para desacoplar responsabilidades se utilizan tres interfaces.
+
+---
+
+## Interface Despachable
+
+Define la operación:
+
+```java
+void despachar();
+```
+
+Su responsabilidad es establecer que un objeto puede ser despachado.
+
+```java
+public interface Despachable {
+
+    void despachar();
+}
+```
+
+La clase abstracta `Pedido` implementa esta interfaz.
+
+---
+
+## Interface Cancelable
+
+Define:
+
+```java
+void cancelar();
+```
+
+Su objetivo es establecer el comportamiento requerido para cancelar un pedido.
+
+```java
+public interface Cancelable {
+
+    void cancelar();
+}
+```
+
+También es implementada por la clase `Pedido`.
+
+---
+
+## Interface Rastreable
+
+Define:
+
+```java
+void verHistorial();
+```
+
+Esta interfaz permite separar la responsabilidad relacionada con el seguimiento e historial de los pedidos.
+
+```java
+public interface Rastreable {
+
+    void verHistorial();
+}
+```
+
+Es implementada por:
+
+```java
+ControladorDeEnvios
+```
+
+---
+
+# ControladorDeEnvios
+
+La clase `ControladorDeEnvios` administra el historial de pedidos procesados.
+
+Está declarada como:
+
+```java
+public class ControladorDeEnvios implements Rastreable
+```
+
+Para almacenar el historial se utiliza:
+
+```java
+ArrayList<String>
+```
+
+Ejemplo:
+
+```java
+private final ArrayList<String> historial;
+```
+
+Los pedidos pueden registrarse mediante:
+
+```java
+registrarEntrega(Pedido pedido)
+```
+
+Posteriormente, el historial puede visualizarse utilizando:
+
+```java
+verHistorial()
+```
+
+---
+
+# Uso de ArrayList
+
+El historial se almacena utilizando una colección dinámica:
+
+```java
+ArrayList<String>
+```
+
+Esta colección permite agregar nuevos registros sin definir previamente una cantidad máxima de elementos.
+
+Ejemplo de información almacenada:
+
+```text
+PedidoComida #101 - Despachado por Luis Díaz
+PedidoEncomienda #102 - Despachado por Daniela Tapia
+PedidoExpress #103 - Cancelado por Camila Soto
+```
 
 ---
 
 # Clase Main
 
-La clase `Main` contiene el punto de entrada de la aplicación.
+La clase `Main` contiene la simulación general solicitada para la actividad.
 
-En ella se crea al menos un objeto correspondiente a cada tipo de pedido:
+Durante la ejecución se realizan las siguientes operaciones:
 
-```java
-PedidoComida comida =
-        new PedidoComida(
-                1,
-                "Av. Providencia 1500",
-                4.0
-        );
-
-PedidoEncomienda encomienda =
-        new PedidoEncomienda(
-                2,
-                "Av. Apoquindo 3200",
-                6.0
-        );
-
-PedidoExpress express =
-        new PedidoExpress(
-                3,
-                "Gran Avenida 4500",
-                7.0
-        );
-```
-
-Para cada objeto se ejecutan los métodos:
-
-```java
-mostrarResumen();
-calcularTiempoEntrega();
-```
-
-Finalmente, los tiempos obtenidos son mostrados de forma comparativa en la consola.
+1. Creación de pedidos.
+2. Asignación automática de repartidores.
+3. Asignación manual de un repartidor.
+4. Visualización de información.
+5. Cálculo del tiempo estimado.
+6. Despacho de pedidos.
+7. Cancelación de un pedido.
+8. Registro de los pedidos.
+9. Visualización del historial.
 
 ---
 
 # Ejemplo de ejecución
 
-Al ejecutar la aplicación se obtiene una salida similar a:
+Una ejecución del sistema puede producir una salida similar a:
 
 ```text
-===== PEDIDO DE COMIDA =====
-ID Pedido: 1
-Dirección de entrega: Av. Providencia 1500
+===== PEDIDO COMIDA =====
+Asignación automática para Pedido Comida.
+Repartidor: Luis Díaz
+Validación: repartidor con mochila térmica.
+Pedido #101
+Dirección: Av. Providencia 1234
 Distancia: 4.0 km
+Repartidor asignado: Luis Díaz
+Estado: Pendiente
 Tiempo estimado: 23 minutos
+Pedido #101 despachado correctamente.
 
-===== PEDIDO DE ENCOMIENDA =====
-ID Pedido: 2
-Dirección de entrega: Av. Apoquindo 3200
-Distancia: 6.0 km
-Tiempo estimado: 29 minutos
+===== PEDIDO ENCOMIENDA =====
+Repartidor asignado manualmente: Daniela Tapia
+Pedido #102
+Dirección: Av. Santa Rosa 567
+Distancia: 7.0 km
+Repartidor asignado: Daniela Tapia
+Estado: Pendiente
+Tiempo estimado: 31 minutos
+Pedido #102 despachado correctamente.
 
 ===== PEDIDO EXPRESS =====
-ID Pedido: 3
-Dirección de entrega: Gran Avenida 4500
-Distancia: 7.0 km
+Asignación automática para Pedido Express.
+Repartidor más cercano: Camila Soto
+Validación: disponibilidad inmediata.
+Pedido #103
+Dirección: Av. Apoquindo 3200
+Distancia: 8.0 km
+Repartidor asignado: Camila Soto
+Estado: Pendiente
 Tiempo estimado: 15 minutos
+Cancelando Pedido Express #103...
+Pedido #103 cancelado exitosamente.
 
-===== COMPARACIÓN DE TIEMPOS =====
-Comida: 23 minutos
-Encomienda: 29 minutos
-Express: 15 minutos
+===== HISTORIAL =====
+- PedidoComida #101 - Despachado por Luis Díaz
+- PedidoEncomienda #102 - Despachado por Daniela Tapia
+- PedidoExpress #103 - Cancelado por Camila Soto
 ```
 
 ---
@@ -400,10 +554,10 @@ El código fuente está organizado dentro del paquete:
 cl.duoc.speedfast
 ```
 
-La estructura del proyecto visualizada en IntelliJ IDEA es:
+La estructura de la **Semana 3** es:
 
 ```text
-SpeedFastPOO2
+semana3
 │
 ├── src
 │   └── cl.duoc.speedfast
@@ -411,165 +565,313 @@ SpeedFastPOO2
 │       ├── Pedido.java
 │       ├── PedidoComida.java
 │       ├── PedidoEncomienda.java
-│       └── PedidoExpress.java
+│       ├── PedidoExpress.java
+│       ├── Despachable.java
+│       ├── Cancelable.java
+│       ├── Rastreable.java
+│       └── ControladorDeEnvios.java
 │
-├── README.md
-├── .gitignore
-└── SpeedFastPOO2.iml
+└── README.md
 ```
 
-Las clases `PedidoComida`, `PedidoEncomienda` y `PedidoExpress` heredan de la clase abstracta `Pedido`.
+> IntelliJ IDEA puede mostrar `cl.duoc.speedfast` como un único elemento debido a la visualización compacta de paquetes.
 
-La clase `Main` contiene el método principal utilizado para ejecutar y comprobar el funcionamiento del sistema.
+---
+
+# Diagrama conceptual de clases
+
+La relación principal entre las clases e interfaces puede representarse de manera simplificada de la siguiente forma:
+
+```text
+              ┌─────────────────────┐
+              │     Despachable     │
+              │    <<interface>>    │
+              │     despachar()     │
+              └──────────▲──────────┘
+                         │
+                         │ implementa
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+              │       Pedido        │
+              │     <<abstract>>    │
+              │                     │
+              │ - idPedido          │
+              │ - direccionEntrega  │
+              │ - distanciaKm       │
+              │ - repartidor        │
+              │ - estado            │
+              │                     │
+              │ + mostrarResumen()  │
+              │ + asignarRepartidor │
+              │ + calcularTiempo()  │
+              │ + despachar()       │
+              │ + cancelar()        │
+              └──────────┬──────────┘
+                         │
+        ┌────────────────┼────────────────┐
+        │                │                │
+        ▼                ▼                ▼
+ PedidoComida    PedidoEncomienda   PedidoExpress
+
+
+              ┌─────────────────────┐
+              │      Cancelable     │
+              │    <<interface>>    │
+              │      cancelar()     │
+              └──────────▲──────────┘
+                         │
+                         │ implementada
+                         │ por Pedido
+
+
+              ┌─────────────────────┐
+              │      Rastreable     │
+              │    <<interface>>    │
+              │    verHistorial()   │
+              └──────────▲──────────┘
+                         │
+                         │ implementa
+                         │
+              ┌──────────┴──────────┐
+              │ ControladorDeEnvios │
+              │                     │
+              │ - historial         │
+              │ + registrarEntrega()│
+              │ + verHistorial()    │
+              └─────────────────────┘
+```
+
+---
+
+# Escalabilidad
+
+La estructura propuesta facilita la escalabilidad del sistema.
+
+Si en el futuro SpeedFast incorpora un nuevo servicio, por ejemplo:
+
+```text
+PedidoFarmacia
+```
+
+se puede crear una nueva clase que herede de `Pedido`:
+
+```java
+public class PedidoFarmacia extends Pedido {
+    // Implementación específica
+}
+```
+
+La nueva clase deberá implementar los comportamientos abstractos requeridos sin modificar significativamente las clases existentes.
+
+Esto permite ampliar el sistema de manera controlada.
+
+---
+
+# Reutilización
+
+La clase abstracta `Pedido` concentra atributos y comportamientos compartidos por todos los tipos de pedidos.
+
+Por ejemplo:
+
+```text
+idPedido
+direccionEntrega
+distanciaKm
+repartidorAsignado
+estado
+```
+
+y operaciones como:
+
+```text
+mostrarResumen()
+despachar()
+cancelar()
+```
+
+se implementan una sola vez y posteriormente son reutilizadas por las clases derivadas.
+
+Esto evita duplicación innecesaria de código.
+
+---
+
+# Mantenibilidad
+
+Las interfaces permiten separar las responsabilidades del sistema.
+
+Por ejemplo:
+
+* `Despachable` define exclusivamente la capacidad de despachar.
+* `Cancelable` define la capacidad de cancelar.
+* `Rastreable` define la capacidad de consultar un historial.
+
+Esta separación permite modificar una funcionalidad específica sin afectar innecesariamente otras partes del sistema.
+
+La combinación de clases abstractas, herencia, polimorfismo e interfaces facilita que el código sea más organizado y mantenible.
 
 ---
 
 # Tecnologías utilizadas
 
-Para el desarrollo del proyecto se utilizaron las siguientes tecnologías y herramientas:
-
-* **Java**
-* **IntelliJ IDEA**
-* **Git**
-* **GitHub**
+* Java
+* IntelliJ IDEA
+* Git
+* GitHub
+* JavaDoc
+* `ArrayList`
 
 ---
 
 # Requisitos
 
-Para compilar y ejecutar el proyecto se requiere:
+Para ejecutar el proyecto se requiere:
 
 * Java JDK instalado.
-* IntelliJ IDEA o cualquier IDE compatible con Java.
-* Git, en caso de querer clonar el repositorio desde GitHub.
+* IntelliJ IDEA o un IDE compatible con Java.
+* Git para clonar el repositorio.
 
 ---
 
-# Clonar el proyecto
+# Clonar el repositorio
 
-Para obtener una copia local del proyecto se debe ejecutar:
+Para obtener una copia local del proyecto:
 
 ```bash
 git clone https://github.com/USUARIO/SpeedFastPOO2.git
 ```
 
-Luego ingresar al directorio:
+Luego ingresar al directorio correspondiente:
 
 ```bash
 cd SpeedFastPOO2
 ```
 
-> Reemplazar `USUARIO` por el nombre de usuario correspondiente en GitHub.
+> Se debe reemplazar `USUARIO` por el nombre de usuario correspondiente en GitHub.
 
 ---
 
-# Abrir el proyecto en IntelliJ IDEA
+# Abrir en IntelliJ IDEA
 
 1. Abrir **IntelliJ IDEA**.
-2. Seleccionar la opción **Open**.
-3. Buscar la carpeta `SpeedFastPOO2`.
-4. Seleccionar la carpeta del proyecto.
-5. Presionar **Open**.
-6. Esperar que IntelliJ IDEA cargue el proyecto.
-7. Verificar que exista un JDK configurado.
+2. Seleccionar **Open**.
+3. Buscar el proyecto descargado.
+4. Abrir la carpeta correspondiente a la Semana 3.
+5. Esperar que IntelliJ IDEA cargue el proyecto.
+6. Verificar que exista un JDK configurado.
 
 ---
 
-# Ejecutar el proyecto desde IntelliJ IDEA
+# Ejecutar el proyecto
 
-Dentro de IntelliJ IDEA:
+Abrir la clase:
 
-1. Abrir el paquete `cl.duoc.speedfast`.
-2. Abrir la clase `Main.java`.
-3. Ejecutar el método `main()`.
-4. Revisar los resultados mostrados en la consola.
-
----
-
-# Compilar y ejecutar desde consola
-
-El proyecto también puede ser compilado utilizando la terminal.
-
-Desde la raíz de `SpeedFastPOO2` ejecutar:
-
-```bash
-javac -d out src/cl/duoc/speedfast/*.java
+```text
+Main.java
 ```
 
-Luego ejecutar la aplicación:
+y ejecutar:
 
-```bash
-java -cp out cl.duoc.speedfast.Main
+```java
+public static void main(String[] args)
 ```
 
-Los resultados serán mostrados directamente en la consola.
+La simulación completa será mostrada en la consola de IntelliJ IDEA.
 
 ---
 
 # Conceptos aplicados
 
-## Semana 1
+Durante el desarrollo de SpeedFast se aplicaron los siguientes conceptos:
 
-Durante la primera semana se aplicaron:
+### Abstracción
 
-* Creación de clases y objetos.
-* Constructores.
-* Herencia.
-* Polimorfismo.
-* Sobrecarga de métodos.
-* Sobreescritura de métodos.
-* Uso de `@Override`.
+Implementada mediante la clase abstracta:
 
-## Semana 2
-
-Durante la segunda semana se incorporaron:
-
-* Clases abstractas.
-* Métodos abstractos.
-* Herencia desde una clase abstracta.
-* Reutilización de atributos y métodos.
-* Especialización del comportamiento.
-* Implementación de métodos abstractos mediante `@Override`.
-* Polimorfismo.
-* Cálculo de tiempos de entrega.
-* Uso de `Math.round()` para ajustar resultados a valores enteros.
-
----
-
-# Documentación JavaDoc
-
-Las clases del proyecto se encuentran documentadas utilizando **JavaDoc**.
-
-La documentación permite describir:
-
-* Propósito de cada clase.
-* Responsabilidad de cada método.
-* Parámetros recibidos por los constructores y métodos.
-* Valores retornados.
-* Comportamiento específico de las clases derivadas.
-
-Ejemplo:
-
-```java
-/**
- * Calcula el tiempo estimado de entrega.
- *
- * @return tiempo estimado de entrega expresado en minutos
- */
-public abstract int calcularTiempoEntrega();
+```text
+Pedido
 ```
 
+### Herencia
+
+Implementada mediante:
+
+```text
+Pedido
+   │
+   ├── PedidoComida
+   ├── PedidoEncomienda
+   └── PedidoExpress
+```
+
+### Polimorfismo
+
+Aplicado mediante la implementación diferente de métodos como:
+
+```text
+asignarRepartidor()
+calcularTiempoEntrega()
+```
+
+### Sobrecarga
+
+Aplicada mediante:
+
+```java
+asignarRepartidor()
+```
+
+y:
+
+```java
+asignarRepartidor(String nombre)
+```
+
+### Sobreescritura
+
+Aplicada mediante `@Override` en las clases derivadas.
+
+### Interfaces
+
+Implementadas mediante:
+
+```text
+Despachable
+Cancelable
+Rastreable
+```
+
+### Colecciones
+
+Utilización de:
+
+```java
+ArrayList<String>
+```
+
+para almacenar el historial de pedidos.
+
 ---
 
-# Evolución del proyecto
+# Documentación
 
-El proyecto SpeedFast se desarrolla de manera incremental.
+Las clases, interfaces, constructores y métodos principales se encuentran documentados utilizando **JavaDoc**.
 
-La **Semana 1** estableció la primera jerarquía de clases y permitió aplicar sobrecarga y sobreescritura.
+Esto facilita la comprensión del código y permite identificar claramente la responsabilidad de cada componente.
 
-La **Semana 2** modifica y mejora esta estructura mediante una clase abstracta `Pedido`, centralizando los atributos y comportamientos comunes y obligando a cada tipo de pedido a implementar su propio cálculo de tiempo de entrega.
+---
 
-El repositorio mantiene el historial de estos cambios mediante commits de Git.
+# Conclusión
+
+La versión integral de SpeedFast demuestra la aplicación conjunta de los principales conceptos estudiados durante las primeras semanas de Programación Orientada a Objetos II.
+
+La utilización de una clase abstracta permite centralizar las características comunes de los pedidos, mientras que el polimorfismo permite implementar comportamientos específicos para cada tipo de entrega.
+
+Las interfaces permiten desacoplar responsabilidades funcionales como despacho, cancelación y rastreo.
+
+Finalmente, la utilización de un controlador independiente para gestionar el historial permite mantener separada la responsabilidad de seguimiento de las responsabilidades propias de cada pedido.
+
+Esta estructura favorece la **escalabilidad, reutilización y mantenibilidad** del sistema.
 
 ---
 
@@ -577,8 +879,8 @@ El repositorio mantiene el historial de estos cambios mediante commits de Git.
 
 **Pablo Márquez**
 
-Proyecto académico desarrollado para la asignatura:
+Proyecto académico desarrollado para:
 
 **Programación Orientada a Objetos II**
 
-**Duoc UC**
+**Duoc UC — Semana 3**

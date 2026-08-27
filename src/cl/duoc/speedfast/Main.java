@@ -3,90 +3,128 @@ package cl.duoc.speedfast;
 /**
  * Clase principal del sistema SpeedFast.
  *
- * Permite comprobar el funcionamiento de la clase abstracta
- * Pedido y la implementación del método abstracto
- * calcularTiempoEntrega() en sus clases derivadas.
+ * Demuestra el uso de abstracción, herencia,
+ * polimorfismo, sobrecarga, sobrescritura e interfaces.
  *
  * @author Pablo Marquez
- * @version 2.0
+ * @version 3.0
  */
 public class Main {
 
     /**
-     * Método principal de ejecución del programa.
+     * Método principal del programa.
      *
      * @param args argumentos de línea de comandos
      */
     public static void main(String[] args) {
 
+        ControladorDeEnvios controlador =
+                new ControladorDeEnvios();
+
         PedidoComida comida =
                 new PedidoComida(
-                        1,
-                        "Av. Providencia 1500",
+                        101,
+                        "Av. Providencia 1234",
                         4.0
                 );
 
         PedidoEncomienda encomienda =
                 new PedidoEncomienda(
-                        2,
-                        "Av. Apoquindo 3200",
-                        6.0
+                        102,
+                        "Av. Santa Rosa 567",
+                        7.0
                 );
 
         PedidoExpress express =
                 new PedidoExpress(
-                        3,
-                        "Gran Avenida 4500",
-                        7.0
+                        103,
+                        "Av. Apoquindo 3200",
+                        8.0
                 );
 
-        System.out.println("===== PEDIDO DE COMIDA =====");
+        /*
+         * PEDIDO DE COMIDA
+         */
+        System.out.println(
+                "===== PEDIDO COMIDA ====="
+        );
+
+        comida.asignarRepartidor();
+
         comida.mostrarResumen();
+
         System.out.println(
                 "Tiempo estimado: "
                         + comida.calcularTiempoEntrega()
                         + " minutos"
         );
 
+        comida.despachar();
+
+        controlador.registrarEntrega(comida);
+
         System.out.println();
 
-        System.out.println("===== PEDIDO DE ENCOMIENDA =====");
+
+        /*
+         * PEDIDO DE ENCOMIENDA
+         */
+        System.out.println(
+                "===== PEDIDO ENCOMIENDA ====="
+        );
+
+        // Asignación manual:
+        // demuestra sobrecarga del método.
+        encomienda.asignarRepartidor(
+                "Daniela Tapia"
+        );
+
         encomienda.mostrarResumen();
+
         System.out.println(
                 "Tiempo estimado: "
                         + encomienda.calcularTiempoEntrega()
                         + " minutos"
         );
 
+        encomienda.despachar();
+
+        controlador.registrarEntrega(encomienda);
+
         System.out.println();
 
-        System.out.println("===== PEDIDO EXPRESS =====");
+
+        /*
+         * PEDIDO EXPRESS
+         */
+        System.out.println(
+                "===== PEDIDO EXPRESS ====="
+        );
+
+        express.asignarRepartidor();
+
         express.mostrarResumen();
+
         System.out.println(
                 "Tiempo estimado: "
                         + express.calcularTiempoEntrega()
                         + " minutos"
         );
 
-        System.out.println();
-        System.out.println("===== COMPARACIÓN DE TIEMPOS =====");
-
         System.out.println(
-                "Comida: "
-                        + comida.calcularTiempoEntrega()
-                        + " minutos"
+                "Cancelando Pedido Express #"
+                        + express.getIdPedido()
+                        + "..."
         );
 
-        System.out.println(
-                "Encomienda: "
-                        + encomienda.calcularTiempoEntrega()
-                        + " minutos"
-        );
+        express.cancelar();
 
-        System.out.println(
-                "Express: "
-                        + express.calcularTiempoEntrega()
-                        + " minutos"
-        );
+        controlador.registrarEntrega(express);
+
+
+        /*
+         * HISTORIAL
+         */
+        controlador.verHistorial();
     }
 }

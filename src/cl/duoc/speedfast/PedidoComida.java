@@ -1,22 +1,19 @@
 package cl.duoc.speedfast;
 
 /**
- * Representa un pedido de comida dentro del sistema SpeedFast.
- *
- * El tiempo estimado de entrega corresponde a 15 minutos
- * base más 2 minutos por cada kilómetro de distancia.
+ * Representa un pedido de comida de SpeedFast.
  *
  * @author Pablo Marquez
- * @version 2.0
+ * @version 3.0
  */
 public class PedidoComida extends Pedido {
 
     /**
-     * Constructor de un pedido de comida.
+     * Constructor de PedidoComida.
      *
-     * @param idPedido identificador único del pedido
+     * @param idPedido identificador del pedido
      * @param direccionEntrega dirección de entrega
-     * @param distanciaKm distancia de entrega en kilómetros
+     * @param distanciaKm distancia en kilómetros
      */
     public PedidoComida(
             int idPedido,
@@ -27,7 +24,29 @@ public class PedidoComida extends Pedido {
     }
 
     /**
-     * Calcula el tiempo estimado de entrega para un pedido de comida.
+     * Realiza la asignación automática de un repartidor
+     * considerando que debe utilizar mochila térmica.
+     */
+    @Override
+    public void asignarRepartidor() {
+
+        repartidorAsignado = "Luis Díaz";
+
+        System.out.println(
+                "Asignación automática para Pedido Comida."
+        );
+
+        System.out.println(
+                "Repartidor: " + repartidorAsignado
+        );
+
+        System.out.println(
+                "Validación: repartidor con mochila térmica."
+        );
+    }
+
+    /**
+     * Calcula el tiempo estimado de entrega.
      *
      * Fórmula:
      * 15 minutos base + 2 minutos por kilómetro.

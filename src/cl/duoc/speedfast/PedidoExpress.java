@@ -3,21 +3,17 @@ package cl.duoc.speedfast;
 /**
  * Representa un pedido de compra express.
  *
- * El tiempo base es de 10 minutos.
- * Si la distancia supera los 5 kilómetros,
- * se agregan 5 minutos adicionales.
- *
  * @author Pablo Marquez
- * @version 2.0
+ * @version 3.0
  */
 public class PedidoExpress extends Pedido {
 
     /**
-     * Constructor de un pedido express.
+     * Constructor de PedidoExpress.
      *
-     * @param idPedido identificador único del pedido
+     * @param idPedido identificador del pedido
      * @param direccionEntrega dirección de entrega
-     * @param distanciaKm distancia de entrega en kilómetros
+     * @param distanciaKm distancia en kilómetros
      */
     public PedidoExpress(
             int idPedido,
@@ -28,11 +24,34 @@ public class PedidoExpress extends Pedido {
     }
 
     /**
-     * Calcula el tiempo estimado de entrega del pedido express.
+     * Asigna automáticamente el repartidor disponible
+     * más cercano.
+     */
+    @Override
+    public void asignarRepartidor() {
+
+        repartidorAsignado = "Camila Soto";
+
+        System.out.println(
+                "Asignación automática para Pedido Express."
+        );
+
+        System.out.println(
+                "Repartidor más cercano: "
+                        + repartidorAsignado
+        );
+
+        System.out.println(
+                "Validación: disponibilidad inmediata."
+        );
+    }
+
+    /**
+     * Calcula el tiempo estimado para un pedido express.
      *
-     * El tiempo base es de 10 minutos.
-     * Si la distancia es mayor a 5 kilómetros,
-     * se agregan 5 minutos adicionales.
+     * El tiempo base corresponde a 10 minutos.
+     * Si la distancia supera los 5 km se agregan
+     * 5 minutos adicionales.
      *
      * @return tiempo estimado en minutos
      */
