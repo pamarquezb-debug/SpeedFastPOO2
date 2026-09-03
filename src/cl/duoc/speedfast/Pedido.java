@@ -9,8 +9,12 @@ package cl.duoc.speedfast;
  *
  * Implementa las interfaces Despachable y Cancelable.
  *
+ * Esta clase es reutilizada durante la Semana 4 para
+ * permitir la ejecución concurrente de entregas mediante
+ * repartidores implementados como tareas Runnable.
+ *
  * @author Pablo Marquez
- * @version 3.0
+ * @version 4.0
  */
 public abstract class Pedido implements Despachable, Cancelable {
 
@@ -63,7 +67,8 @@ public abstract class Pedido implements Despachable, Cancelable {
     /**
      * Asigna automáticamente un repartidor.
      *
-     * Cada subclase debe implementar su propia lógica.
+     * Cada subclase debe implementar su propia lógica
+     * de asignación.
      */
     public abstract void asignarRepartidor();
 
@@ -87,7 +92,8 @@ public abstract class Pedido implements Despachable, Cancelable {
     /**
      * Calcula el tiempo estimado de entrega.
      *
-     * Cada clase derivada debe implementar su propia regla.
+     * Cada clase derivada debe implementar su propia
+     * regla para calcular el tiempo.
      *
      * @return tiempo estimado en minutos
      */
@@ -95,6 +101,9 @@ public abstract class Pedido implements Despachable, Cancelable {
 
     /**
      * Despacha el pedido.
+     *
+     * Si el pedido se encuentra cancelado,
+     * no podrá ser despachado.
      */
     @Override
     public void despachar() {
@@ -119,6 +128,9 @@ public abstract class Pedido implements Despachable, Cancelable {
 
     /**
      * Cancela el pedido.
+     *
+     * Si el pedido ya fue despachado,
+     * no podrá ser cancelado.
      */
     @Override
     public void cancelar() {
@@ -157,6 +169,39 @@ public abstract class Pedido implements Despachable, Cancelable {
      */
     public String getRepartidorAsignado() {
         return repartidorAsignado;
+    }
+
+    /**
+     * Asigna el nombre del repartidor responsable
+     * de realizar la entrega.
+     *
+     * Este método es utilizado por la clase Repartidor
+     * durante la ejecución concurrente de los pedidos.
+     *
+     * @param repartidorAsignado nombre del repartidor asignado
+     */
+    public void setRepartidorAsignado(String repartidorAsignado) {
+        this.repartidorAsignado = repartidorAsignado;
+    }
+
+    /**
+     * Retorna la dirección donde debe realizarse
+     * la entrega.
+     *
+     * @return dirección de entrega
+     */
+    public String getDireccionEntrega() {
+        return direccionEntrega;
+    }
+
+    /**
+     * Retorna la distancia correspondiente
+     * a la entrega.
+     *
+     * @return distancia expresada en kilómetros
+     */
+    public double getDistanciaKm() {
+        return distanciaKm;
     }
 
     /**

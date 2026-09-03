@@ -1,130 +1,166 @@
 package cl.duoc.speedfast;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 /**
- * Clase principal del sistema SpeedFast.
+ * Clase principal de SpeedFast para la Semana 4.
  *
- * Demuestra el uso de abstracción, herencia,
- * polimorfismo, sobrecarga, sobrescritura e interfaces.
+ * Simula múltiples repartidores realizando entregas
+ * concurrentemente mediante ExecutorService.
  *
  * @author Pablo Marquez
- * @version 3.0
+ * @version 4.0
  */
 public class Main {
 
     /**
-     * Método principal del programa.
+     * Método principal de ejecución.
      *
      * @param args argumentos de línea de comandos
      */
     public static void main(String[] args) {
 
-        ControladorDeEnvios controlador =
-                new ControladorDeEnvios();
+        /*
+         * Pedidos del repartidor 1
+         */
+        List<Pedido> pedidosLuis = Arrays.asList(
 
-        PedidoComida comida =
                 new PedidoComida(
                         101,
                         "Av. Providencia 1234",
                         4.0
-                );
+                ),
 
-        PedidoEncomienda encomienda =
-                new PedidoEncomienda(
-                        102,
-                        "Av. Santa Rosa 567",
-                        7.0
-                );
-
-        PedidoExpress express =
                 new PedidoExpress(
+                        102,
+                        "Av. Las Condes 4500",
+                        7.0
+                )
+        );
+
+        /*
+         * Pedidos del repartidor 2
+         */
+        List<Pedido> pedidosDaniela = Arrays.asList(
+
+                new PedidoEncomienda(
                         103,
-                        "Av. Apoquindo 3200",
+                        "Av. Santa Rosa 567",
+                        5.0
+                ),
+
+                new PedidoComida(
+                        104,
+                        "Gran Avenida 3200",
+                        6.0
+                )
+        );
+
+        /*
+         * Pedidos del repartidor 3
+         */
+        List<Pedido> pedidosCamila = Arrays.asList(
+
+                new PedidoExpress(
+                        105,
+                        "Av. Apoquindo 6000",
                         8.0
+                ),
+
+                new PedidoEncomienda(
+                        106,
+                        "Av. Grecia 1500",
+                        3.0
+                )
+        );
+
+        /*
+         * Creación de repartidores.
+         */
+        Repartidor repartidor1 =
+                new Repartidor(
+                        "Luis Díaz",
+                        pedidosLuis
+                );
+
+        Repartidor repartidor2 =
+                new Repartidor(
+                        "Daniela Tapia",
+                        pedidosDaniela
+                );
+
+        Repartidor repartidor3 =
+                new Repartidor(
+                        "Camila Soto",
+                        pedidosCamila
                 );
 
         /*
-         * PEDIDO DE COMIDA
+         * ExecutorService con tres hilos.
+         *
+         * Cada hilo ejecutará un repartidor.
          */
-        System.out.println(
-                "===== PEDIDO COMIDA ====="
-        );
-
-        comida.asignarRepartidor();
-
-        comida.mostrarResumen();
+        ExecutorService executor =
+                Executors.newFixedThreadPool(3);
 
         System.out.println(
-                "Tiempo estimado: "
-                        + comida.calcularTiempoEntrega()
-                        + " minutos"
+                "===== INICIO SIMULACIÓN SPEEDFAST ====="
         );
-
-        comida.despachar();
-
-        controlador.registrarEntrega(comida);
-
-        System.out.println();
-
 
         /*
-         * PEDIDO DE ENCOMIENDA
+         * Los tres repartidores comienzan a trabajar
+         * concurrentemente.
          */
-        System.out.println(
-                "===== PEDIDO ENCOMIENDA ====="
-        );
-
-        // Asignación manual:
-        // demuestra sobrecarga del método.
-        encomienda.asignarRepartidor(
-                "Daniela Tapia"
-        );
-
-        encomienda.mostrarResumen();
-
-        System.out.println(
-                "Tiempo estimado: "
-                        + encomienda.calcularTiempoEntrega()
-                        + " minutos"
-        );
-
-        encomienda.despachar();
-
-        controlador.registrarEntrega(encomienda);
-
-        System.out.println();
-
+        executor.execute(repartidor1);
+        executor.execute(repartidor2);
+        executor.execute(repartidor3);
 
         /*
-         * PEDIDO EXPRESS
+         * No se aceptarán nuevas tareas.
          */
-        System.out.println(
-                "===== PEDIDO EXPRESS ====="
-        );
+        executor.shutdown();
 
-        express.asignarRepartidor();
+        try {
 
-        express.mostrarResumen();
+            /*
+             * Espera hasta que todos los repartidores
+             * terminen sus entregas.
+             */
+            boolean terminado =
+                    executor.awaitTermination(
+                            1,
+                            TimeUnit.MINUTES
+                    );
 
-        System.out.println(
-                "Tiempo estimado: "
-                        + express.calcularTiempoEntrega()
-                        + " minutos"
-        );
+            if (terminado) {
 
-        System.out.println(
-                "Cancelando Pedido Express #"
-                        + express.getIdPedido()
-                        + "..."
-        );
+                System.out.println();
+                System.out.println(
+                        "===== TODAS LAS ENTREGAS FINALIZARON ====="
+                );
 
-        express.cancelar();
+            } else {
 
-        controlador.registrarEntrega(express);
+                System.out.println(
+                        "La simulación superó el tiempo máximo."
+                );
 
+                executor.shutdownNow();
+            }
 
-        /*
-         * HISTORIAL
-         */
-        controlador.verHistorial();
+        } catch (InterruptedException e) {
+
+            executor.shutdownNow();
+
+            Thread.currentThread().interrupt();
+
+            System.out.println(
+                    "La ejecución principal fue interrumpida."
+            );
+        }
     }
 }
