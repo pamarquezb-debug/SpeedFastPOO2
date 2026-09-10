@@ -665,7 +665,7 @@ Para ejecutar la actividad:
 4. Abrir la clase:
 
 ```text
-Semana 5/src/cl.duoc.speedfast/Main.java
+https://github.com/pamarquezb-debug/SpeedFastPOO2/tree/master/Semana%205/src/cl/duoc/speedfast/Main.java
 ```
 
 5. Ejecutar:
