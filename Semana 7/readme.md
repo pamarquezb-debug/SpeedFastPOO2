@@ -623,7 +623,7 @@ Estos valores deben corresponder a la configuración local del servidor MySQL.
 Desde una terminal ejecutar:
 
 ```bash
-git clone URL_DEL_REPOSITORIO
+git clone [URL_DEL_REPOSITORIO](https://github.com/pamarquezb-debug/SpeedFastPOO2/edit/master/Semana%207)
 ```
 
 Luego ingresar al directorio del proyecto.
